@@ -6,12 +6,20 @@ struct Person;
 #[derive(Component)]
 struct Name(String);
 
+pub struct HelloPlugin;
+
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_systems(Startup, add_people)
-        .add_systems(Update, (hello_world, (update_people, greet_people).chain()))
+        .add_plugins((DefaultPlugins, HelloPlugin))
         .run();
+}
+
+impl Plugin for HelloPlugin {
+    fn build(&self, app: &mut App) {
+        app
+            .add_systems(Startup, add_people)
+            .add_systems(Update, (hello_world, (update_people, greet_people).chain()));
+    }
 }
 
 fn update_people(mut query: Query<&mut Name, With<Person>>) {
